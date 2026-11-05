@@ -1,1 +1,129 @@
-<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Katalog | Perpustakaan Digital</title><link rel="stylesheet" href="assets/style.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script defer src="assets/js/config.js"></script><script defer src="assets/js/common.js"></script><script defer src="assets/js/catalog.js"></script></head><body><header class="topbar"><a class="brand" href="index.html">📚 Perpustakaan Digital <small>MTs Al Uswah</small></a><nav><a href="index.html">Beranda</a><a class="active" href="katalog.html">Katalog</a><a href="petugas.html">Petugas</a></nav></header><main class="wrap"><section class="heading"><span class="eyebrow">JELAJAHI KOLEKSI</span><h1>Katalog <span>buku.</span></h1><p>Cari buku berdasarkan judul, penulis, atau kategori.</p></section><div class="tools"><input id="search" placeholder="Cari judul atau penulis buku..."><select id="category"><option value="">Semua kategori</option><option>Pelajaran</option><option>Agama</option><option>Fiksi</option><option>Pengetahuan</option><option>Sejarah</option><option>Lainnya</option></select></div><p id="result-count">Memuat katalog...</p><section id="book-grid" class="book-grid"><p>Menghubungkan ke katalog...</p></section></main><footer>© <span id="year"></span> Perpustakaan Digital MTs Al Uswah</footer></body></html>
+
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <title>Katalog | Perpustakaan Digital</title>
+
+  <link rel="stylesheet" href="assets/style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="assets/js/config.js"></script>
+  <script defer src="assets/js/common.js"></script>
+  <script defer src="assets/js/catalog.js"></script>
+</head>
+
+<body>
+
+  <header class="topbar">
+    <a class="brand" href="index.html">
+      📚 Perpustakaan Digital
+      <small>MTs Al Uswah</small>
+    </a>
+
+    <nav>
+      <a href="index.html">Beranda</a>
+      <a class="active" href="katalog.html">Katalog</a>
+      <a href="petugas.html">Petugas</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+
+    <section class="heading">
+      <span class="eyebrow">JELAJAHI KOLEKSI</span>
+      <h1>Katalog <span>buku.</span></h1>
+      <p>Cari buku berdasarkan judul, penulis, atau kategori.</p>
+    </section>
+
+    <!-- PENCARIAN DAN KATEGORI -->
+    <div class="tools">
+      <input
+        id="search"
+        placeholder="Cari judul atau penulis buku..."
+      >
+
+      <select id="category">
+        <option value="">Semua kategori</option>
+        <option>Pelajaran</option>
+        <option>Agama</option>
+        <option>Fiksi</option>
+        <option>Pengetahuan</option>
+        <option>Sejarah</option>
+        <option>Lainnya</option>
+      </select>
+    </div>
+
+    <!-- JUMLAH HASIL -->
+    <p id="result-count">Memuat katalog...</p>
+
+    <!-- DAFTAR BUKU -->
+    <section id="book-grid" class="book-grid">
+      <p>Menghubungkan ke katalog...</p>
+    </section>
+
+    <!-- FORM PEMINJAMAN SISWA -->
+    <section id="borrow-panel" class="panel hidden">
+
+      <h2>Form Peminjaman Buku</h2>
+
+      <p id="selected-book">Buku yang dipilih</p>
+
+      <div class="form-grid">
+
+        <input
+          id="student-name"
+          type="text"
+          placeholder="Nama lengkap siswa"
+          maxlength="100"
+          required
+        >
+
+        <input
+          id="student-class"
+          type="text"
+          placeholder="Contoh: 9D"
+          maxlength="30"
+          required
+        >
+
+      </div>
+
+      <div class="actions">
+
+        <button
+          id="submit-borrow"
+          class="btn primary"
+          type="button"
+        >
+          Ajukan Peminjaman
+        </button>
+
+        <button
+          id="cancel-borrow"
+          class="btn secondary"
+          type="button"
+        >
+          Batal
+        </button>
+
+      </div>
+
+      <div
+        id="borrow-message"
+        class="message"
+        role="status"
+      ></div>
+
+    </section>
+
+  </main>
+
+  <footer>
+    © <span id="year"></span> Perpustakaan Digital MTs Al Uswah
+  </footer>
+
+</body>
+</html>
