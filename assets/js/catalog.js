@@ -16,21 +16,30 @@ document.addEventListener("DOMContentLoaded", async () => {
   let books = [];
   let selectedBook = null;
 
-  // Memastikan elemen HTML tersedia
   if (!grid || !search || !category || !resultCount) {
-    console.error("Elemen katalog tidak ditemukan.");
+    console.error("[Catalog] Elemen katalog tidak lengkap.");
     return;
   }
 
-  // Menampilkan pesan peminjaman
-  function showBorrowMessage(text, error = false) {
-    if (!borrowMessage) return;
-
-    borrowMessage.textContent = text;
-    borrowMessage.className = "message " + (error ? "error" : "success");
+  if (
+    !borrowPanel ||
+    !selectedBookText ||
+    !studentName ||
+    !studentClass ||
+    !submitBorrow ||
+    !cancelBorrow ||
+    !borrowMessage
+  ) {
+    console.error("[Catalog] Elemen formulir peminjaman tidak lengkap.");
+    return;
   }
 
-  // Memuat data buku
+  function showBorrowMessage(text, error = false) {
+    borrowMessage.textContent = text;
+    borrowMessage.className =
+      "message " + (error ? "error" : "success");
+  }
+
   async function loadBooks() {
     const { data, error } = await window.db()
       .from("books")
@@ -43,7 +52,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     render();
   }
 
-  // Menampilkan katalog
   function render() {
     const query = search.value.trim().toLowerCase();
     const selectedCategory = category.value;
@@ -80,12 +88,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
           <div class="book-info">
             <h3>${window.esc(book.title)}</h3>
-
-            <p>
-              ${window.esc(
-                book.author || "Penulis tidak dicantumkan"
-              )}
-            </p>
+            <p>${window.esc(
+              book.author || "Penulis tidak dicantumkan"
+            )}</p>
 
             <b>
               ${available
@@ -107,10 +112,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }).join("");
   }
 
-  // Membuka formulir peminjaman
   function openBorrowForm(book) {
-    if (!borrowPanel) return;
-
     selectedBook = book;
 
     selectedBookText.textContent =
@@ -134,19 +136,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     studentName.focus();
   }
 
-  // Menutup formulir
   function closeBorrowForm() {
     borrowPanel.classList.add("hidden");
 
     selectedBook = null;
-
     studentName.value = "";
     studentClass.value = "";
 
     showBorrowMessage("");
   }
 
-  // Klik tombol pinjam
   grid.addEventListener("click", event => {
     const button = event.target.closest(".borrow-button");
 
@@ -159,15 +158,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (book) openBorrowForm(book);
   });
 
-  // Membatalkan peminjaman
   cancelBorrow.addEventListener("click", closeBorrowForm);
 
-  // Mengirim peminjaman langsung ke Supabase
   submitBorrow.addEventListener("click", async () => {
     if (!selectedBook) return;
 
     const name = studentName.value.trim();
-    const studentClassValue = studentClass.value.trim();
+    const className = studentClass.value.trim();
 
     if (name.length < 2 || name.length > 100) {
       showBorrowMessage(
@@ -177,15 +174,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    if (studentClassValue.length < 1 ||
-        studentClassValue.length > 30) {
+    if (className.length < 1 || className.length > 30) {
       showBorrowMessage("Masukkan kelas dengan benar.", true);
       return;
     }
 
     submitBorrow.disabled = true;
     submitBorrow.textContent = "Memproses...";
-
     showBorrowMessage("");
 
     try {
@@ -194,27 +189,35 @@ document.addEventListener("DOMContentLoaded", async () => {
         {
           p_book_id: selectedBook.id,
           p_student_name: name,
-          p_student_class: studentClassValue
+          p_student_class: className
         }
       );
 
       if (error) throw error;
 
+      // Peminjaman sudah berhasil di database.
       showBorrowMessage(
         "Peminjaman berhasil! Silakan ambil buku di perpustakaan."
       );
 
       submitBorrow.textContent = "Berhasil";
 
-      // Perbarui stok setelah peminjaman
-      await loadBooks();
+      // Muat ulang katalog tanpa membatalkan status keberhasilan.
+      try {
+        await loadBooks();
+      } catch (refreshError) {
+        console.error(
+          "[Catalog] Gagal memperbarui stok:",
+          refreshError
+        );
+      }
 
-      setTimeout(() => {
-        closeBorrowForm();
-      }, 2200);
+      submitBorrow.disabled = true;
+
+      setTimeout(closeBorrowForm, 2200);
 
     } catch (error) {
-      console.error("Borrowing error:", error);
+      console.error("[Borrowing] Error:", error);
 
       showBorrowMessage(
         error.message || "Peminjaman gagal. Silakan coba lagi.",
@@ -226,15 +229,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  // Pencarian dan filter kategori
   search.addEventListener("input", render);
   category.addEventListener("change", render);
 
-  // Memuat katalog pertama kali
   try {
     await loadBooks();
+    console.log("[Catalog] Katalog berhasil dimuat.");
   } catch (error) {
-    console.error("Catalog error:", error);
+    console.error("[Catalog] Gagal memuat:", error);
 
     grid.innerHTML =
       `<p class="empty">${window.esc(error.message)}</p>`;
