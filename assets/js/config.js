@@ -16,7 +16,7 @@ window.addEventListener("DOMContentLoaded", () => {
       window.SUPABASE_ANON_KEY
     );
 
-    console.log("Supabase berhasil diinisialisasi!");
+    console.log("Supabase berhasil diinisialisasi.");
   } else {
     console.error("Supabase gagal diinisialisasi. Periksa URL, key, dan CDN.");
   }
